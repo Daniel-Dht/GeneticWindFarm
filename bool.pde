@@ -1,10 +1,11 @@
 
-void iniValues(){
+void iniValues(){ // Initialise la première génération aléatoirement
   for (int k=0; k<pop; k++) {
     for (int i=0; i<n; i++) {
       for (int j=0; j<n; j++) {
         bool = trueOrFalse();
         popChamp[k][i][j] = bool;
+        popChampInit[i][j] = bool;
       }
     }
   }
@@ -26,7 +27,7 @@ void displayChamp2(Boolean [][] champ){ // affiche un des éléments de la popul
   }  
 }
 
-int findPower2(Boolean [][] champ){ // ATTENTION POWER inf à N
+int findPower2(Boolean [][] champ){ // FONCTION FITNESS
 
   int n2 =int(n/2) ;
   int s = 0;
@@ -40,7 +41,7 @@ int findPower2(Boolean [][] champ){ // ATTENTION POWER inf à N
   return s;
 }
 
-void findTheBest2(){ // donne le meilleur pour l'afficher
+void findTheBest2(){ // donne le meilleur élément pour l'afficher
 
   int temp_power = power[0];
   indexOfBest = 0;
@@ -54,7 +55,7 @@ void findTheBest2(){ // donne le meilleur pour l'afficher
   ProbaOfBest = proba[indexOfBest];
 }
 
-void setPower2() { // permet de calculer les proba en settant les poids pour chaque el de la pop
+void setPower2() { // permet de calculer les proba en settant les poids pour chaque élément de la pop
   totalPowerUp = 0;
   
   for (int k=0; k<pop; k++) {
@@ -80,6 +81,7 @@ void findProba2(){  // retourne la proba de selection pour tous les parents grâ
 ////////////////////////////////////////////////////////////////////////////////////////////////////////// fortunewheel selection crossover et mutation
 
 int fortuneWheel2(){ // enclenche la selection d'après proba[] pour un parent
+  // fonction consruite sur le même principe qu'une véritable roue de la fortune
   boolean go = true;
   int i =0;
   
@@ -113,25 +115,6 @@ void selection2(){ // applique la seletion pour tous les parents grâce à fortu
   }  
 }
 
-void crossOver2() {   // Effectue un crossover sur chaque couple d'élément sous une conditionde proba 0.8
-  int n2 = int(n/2);
-  copiePop();
-  
-  for (int k=0; k<pop; k+=2) { 
-    if(random(1)<0.8) {
-      for (int i=0; i<n; i++) {      // remplissage des moitiés
-        for (int j=0; j<n2; j++) {
-          
-          popChamp[k][i][n2+j]   = tempPopChamp[k+1][i][j] ;      // parent 1 partie 1
-          popChamp[k][i][j]      = tempPopChamp[k][i][j+n2] ;   // parent 1 partie 2
-          popChamp[k+1][i][n2+j] = tempPopChamp[k][i][j] ;    // parent 2 partie 1
-          popChamp[k+1][i][j]    = tempPopChamp[k+1][i][j+n2];  // parent 2 partie 2   
-          
-        }
-      }
-    }
-  }
-}
 
 void mutation2() {
   // Effectue une mutation pour chaque bit de chaque élément de la population sous une condition de proba 0.01
@@ -142,4 +125,16 @@ void mutation2() {
       }
     }
   }
+}
+
+void displayChampInit(Boolean [][] champ){ 
+// affiche le meilleur un des élément de la population initiale (génération 0), une fois l'algo fini
+  for (int i=0; i<n; i++) {
+    for (int j=0; j<n; j++) {
+      float pas = width/n;
+      noFill();
+      stroke(20,80,255);
+      if (champ[i][j]) ellipse( pas*i+pas/2,pas*j+pas/2,pas/2,pas/2);
+    }
+  }  
 }

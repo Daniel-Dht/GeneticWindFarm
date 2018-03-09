@@ -1,8 +1,4 @@
 
-//************  int test  *************//
-//*************************************//                              stat : n=14,pop=1000, mutation=0.0001  => 6625 générations 
-//*************************************//                              stat : n=10,pop=1000, mutation=0.001  => 1645,1116,986,820,771,675,675,595,590,579,492,480,459,449 générations   
-
 int n=10; //TAILLE DU CHAMP 
 int pop = 1000; // taille d'une génération
 
@@ -10,49 +6,47 @@ int indexOfBest ;               // index du meilleur élément
 int PowerOfBest;                // Poid du meilleur élément
 float ProbaOfBest ;            // proba du meilleur élément
 
-int[] power = new int[pop];     // power de la population
-float totalPower;      //total du poids afin de calculer les proba de selection
-float totalPowerUp=0;   //total du poids afin de calculer les proba de selection amélioré
+int[] power = new int[pop];     // liste du poids des éléments de la population
+float totalPowerUp=0;   //total du poids afin de calculer les proba de selection 
 float[] proba = new float[pop] ;// proba d'apparition des chaque élément dans la selection naturelle
 
 
 Boolean[][][] popChamp = new Boolean[pop][n][n]; // liste de la population
-Boolean[][][] tempPopChamp = new Boolean[pop][n][n];  // copie de la liste de la population
+Boolean[][] popChampInit = new Boolean[n][n]; // liste de la population initiale
+Boolean[][][] tempPopChamp = new Boolean[pop][n][n];  // copie de la liste de la population pour effectuer les corssOver correctement
 Boolean bool ; // permet d'inialitser la première génération
 
 int nbGen =0; // compteur de génération
 int powerMaxOfEvolution =0; // compteur du poids du meilleur élément intergénérationnel
 //float sommeProba =0 ; // debug tool
 
-int pulse =6; // intensité de la séparation des bons éléments des failes
-float mutation = 0.001;
+int pulse =8; // intensité de la séparation des bons éléments des faibles 
+float mutation = 0.001; // proba de mutation de chaque bit
 
-int powerStop = n*n*20;
+int powerStop = n*n*20; // si on atteint ce max, le loop se stop A MODIFIE SI MODIF DE LA FCT FITNESS
 
 void setup(){  //********************************************  SETUP *************************************************************
   size(800,800);
   background(220);
-  
-  iniValues();
- 
+  iniValues(); // on initialise la première génération
 }
 
 Boolean go =true;
-int count =1;
-
 void draw() {//********************************************  LOOP *************************************************************
 
    if (go) {
    
-     //go=false;
+     //go=false; // décommenter si on veut faire génération par génération pour observer le comportement de l'algo
      
-     process();
+     process(); // processus de l'algo de génétic
      
    }
    if (keyPressed) go =true;
 
-   //go =true ;
-   if(powerMaxOfEvolution == powerStop ) go =false;
+   if(powerMaxOfEvolution == powerStop ) {
+     go =false;
+     displayChampInit(popChampInit);
+   }
 }
 
 
@@ -61,10 +55,10 @@ void process() {      //********************************************  Main  ****
   
      setPower2();
        
-       findTheBest2();
-       displayChamp2(popChamp[indexOfBest]);
-       if(powerMaxOfEvolution<PowerOfBest) powerMaxOfEvolution = PowerOfBest ;   
-       
+     findTheBest2(); // on cherche le meilleur élément de la génration
+     displayChamp2(popChamp[indexOfBest]); // on l'affiche
+     if(powerMaxOfEvolution<PowerOfBest) powerMaxOfEvolution = PowerOfBest ;   // détermine si c'est meilleur (intergénérationnel)
+     
      print("**************      Generation n°", nbGen, "     POWER MAX : ", powerMaxOfEvolution, "   current power : ", PowerOfBest, " --> proba : ", ProbaOfBest,"******************\n");  
      //print("  Generation n°", nbGen,"\n");
      
@@ -78,7 +72,7 @@ void process() {      //********************************************  Main  ****
 }
 
 
-Boolean trueOrFalse(){ // permet d'initialiser la première génération
+Boolean trueOrFalse(){ // permet d'initialiser la première génération dans initValues()
   float r = random(1);
   if(r<0.5) {
     return true;
